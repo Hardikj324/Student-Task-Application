@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudySync | Student Task Manager</title>
+  <meta name="description" content="Organize and track your academic tasks, assignments, and deadlines with StudySync.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="dark">
+
+  <!-- ==============================
+       SIDEBAR
+  ================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-graduation-cap"></i>
+      </div>
+      <div class="brand-name">Study<span>Sync</span></div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Workspace</div>
+      <button class="nav-item active" data-status="all" id="navAll">
+        <span class="nav-icon"><i class="fa-solid fa-layer-group"></i></span>
+        <span class="nav-label">All Tasks</span>
+        <span class="nav-count" id="sidebarCountAll">0</span>
+      </button>
+      <button class="nav-item" data-status="pending" id="navPending">
+        <span class="nav-icon"><i class="fa-solid fa-hourglass-half"></i></span>
+        <span class="nav-label">Pending</span>
+        <span class="nav-count pending" id="sidebarCountPending">0</span>
+      </button>
+      <button class="nav-item" data-status="completed" id="navCompleted">
+        <span class="nav-icon"><i class="fa-solid fa-circle-check"></i></span>
+        <span class="nav-label">Completed</span>
+        <span class="nav-count done" id="sidebarCountCompleted">0</span>
+      </button>
+
+      <div class="nav-section-label" style="margin-top:1.5rem;">By Priority</div>
+      <button class="nav-item priority-nav" data-priority="high">
+        <span class="nav-icon"><i class="fa-solid fa-fire-flame-curved" style="color:#f87171;"></i></span>
+        <span class="nav-label">High Priority</span>
+        <span class="nav-count high" id="sidebarCountHigh">0</span>
+      </button>
+      <button class="nav-item priority-nav" data-priority="medium">
+        <span class="nav-icon"><i class="fa-solid fa-bolt" style="color:#fbbf24;"></i></span>
+        <span class="nav-label">Medium Priority</span>
+        <span class="nav-count medium" id="sidebarCountMedium">0</span>
+      </button>
+      <button class="nav-item priority-nav" data-priority="low">
+        <span class="nav-icon"><i class="fa-solid fa-leaf" style="color:#34d399;"></i></span>
+        <span class="nav-label">Low Priority</span>
+        <span class="nav-count low" id="sidebarCountLow">0</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-action-btn" id="resetSampleDataBtn" title="Load sample tasks">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span>Reset Samples</span>
+      </button>
+      <button class="sidebar-action-btn danger" id="clearCompletedBtn" title="Clear completed tasks">
+        <i class="fa-regular fa-trash-can"></i>
+        <span>Clear Done</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ==============================
+       MAIN CONTENT
+  ================================ -->
+  <div class="app-shell">
+
+    <!-- Top Topbar -->
+    <header class="topbar">
+      <button class="hamburger-btn" id="sidebarToggleBtn" aria-label="Toggle sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div class="topbar-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search tasks by title, subject…" autocomplete="off">
+        <button class="clear-search hidden" id="clearSearchBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="topbar-right">
+        <div class="today-pill">
+          <i class="fa-regular fa-calendar"></i>
+          <span id="headerCurrentDate">Today</span>
+        </div>
+        <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme">
+          <i class="fa-solid fa-moon moon-icon"></i>
+          <i class="fa-solid fa-sun sun-icon"></i>
+        </button>
+        <button class="btn-add-task" id="openAddModalBtn">
+          <i class="fa-solid fa-plus"></i>
+          New Task
+        </button>
+      </div>
+    </header>
+
+    <!-- Scrollable Page Body -->
+    <main class="page-body">
+
+      <!-- Hero Banner -->
+      <section class="hero-banner">
+        <div class="hero-left">
+          <div class="hero-eyebrow">
+            <i class="fa-solid fa-sparkles"></i> Academic Dashboard
+          </div>
+          <h2 id="greetingTitle">Good evening, Student! 🎓</h2>
+          <p>Track every assignment, crush every deadline, and build the study habits that lead to success.</p>
+
+          <div class="hero-cta-row">
+            <button class="btn-add-task hero-cta" id="heroAddBtn">
+              <i class="fa-solid fa-plus"></i> Create New Task
+            </button>
+            <div class="hero-quick-stat">
+              <span id="quickStatText">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="stat-orb-group">
+            <div class="stat-orb orb-total">
+              <div class="orb-value" id="statTotalCount">0</div>
+              <div class="orb-label">Total</div>
+            </div>
+            <div class="stat-orb orb-pending">
+              <div class="orb-value" id="statPendingCount">0</div>
+              <div class="orb-label">Pending</div>
+            </div>
+            <div class="stat-orb orb-done">
+              <div class="orb-value" id="statCompletedCount">0</div>
+              <div class="orb-label">Done</div>
+            </div>
+            <div class="stat-orb orb-urgent">
+              <div class="orb-value" id="statUrgentCount">0</div>
+              <div class="orb-label">Urgent</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Row inside hero -->
+        <div class="hero-progress-row">
+          <div class="progress-info">
+            <span class="progress-label">Overall Completion</span>
+            <span class="progress-pct" id="progressPercentageText">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressBarFill" style="width:0%"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filters Bar -->
+      <section class="filters-bar">
+        <div class="filter-tabs" role="tablist">
+          <button class="ftab active" data-status="all" role="tab">All <span id="countAll">0</span></button>
+          <button class="ftab" data-status="pending" role="tab">Pending <span id="countPending">0</span></button>
+          <button class="ftab" data-status="completed" role="tab">Completed <span id="countCompleted">0</span></button>
+        </div>
+
+        <div class="filter-selects">
+          <div class="select-pill">
+            <i class="fa-solid fa-filter" style="font-size:0.75rem;"></i>
+            <select id="priorityFilter">
+              <option value="all">All Priorities</option>
+              <option value="high">🔴 High</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+            </select>
+          </div>
+          <div class="select-pill">
+            <i class="fa-solid fa-arrow-up-wide-short" style="font-size:0.75rem;"></i>
+            <select id="sortBySelect">
+              <option value="dueDateAsc">Due: Soonest</option>
+              <option value="dueDateDesc">Due: Furthest</option>
+              <option value="priority">Priority</option>
+              <option value="newest">Newest First</option>
+              <option value="alphabetical">A → Z</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tasks Header -->
+      <div class="tasks-header">
+        <div class="tasks-header-left">
+          <h3 id="currentViewTitle">All Tasks</h3>
+          <span class="task-chip" id="tasksVisibleBadge">0 tasks</span>
+        </div>
+      </div>
+
+      <!-- Task Grid -->
+      <div class="task-grid" id="tasksContainer"></div>
+
+      <!-- Empty State -->
+      <div class="empty-state hidden" id="emptyStateContainer">
+        <div class="empty-emoji">📋</div>
+        <h4 id="emptyStateTitle">No tasks here yet</h4>
+        <p id="emptyStateMessage">Create your first academic task to get started.</p>
+        <button class="btn-add-task" id="emptyStateAddBtn"><i class="fa-solid fa-plus"></i> Add Task</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==============================
+       ADD / EDIT MODAL
+  ================================ -->
+  <div class="modal-backdrop hidden" id="taskModal">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+      <div class="modal-top">
+        <div class="modal-header-info">
+          <div class="modal-badge" id="modalIconBadge"><i class="fa-solid fa-plus"></i></div>
+          <div>
+            <h3 id="modalTitle">New Task</h3>
+            <p class="modal-sub">Fill in the details below to schedule your work</p>
+          </div>
+        </div>
+        <button class="modal-x" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="taskForm" novalidate>
+        <input type="hidden" id="taskIdInput">
+
+        <div class="field">
+          <label for="taskTitleInput" class="field-label req">Task Title</label>
+          <input type="text" id="taskTitleInput" class="field-input" placeholder="e.g. OS Lab Report #3" maxlength="100" required>
+          <span class="field-err" id="titleError">Please enter a task title.</span>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="taskSubjectInput" class="field-label">Subject / Course</label>
+            <input type="text" id="taskSubjectInput" class="field-input" list="subjectList" placeholder="e.g. Computer Science" maxlength="40">
+            <datalist id="subjectList">
+              <option value="Computer Science">
+              <option value="Mathematics">
+              <option value="Physics">
+              <option value="Data Structures">
+              <option value="Web Development">
+              <option value="Chemistry">
+              <option value="Economics">
+              <option value="Literature">
+            </datalist>
+          </div>
+
+          <div class="field">
+            <label for="taskPriorityInput" class="field-label req">Priority</label>
+            <select id="taskPriorityInput" class="field-input" required>
+              <option value="low">🟢 Low</option>
+              <option value="medium" selected>🟡 Medium</option>
+              <option value="high">🔴 High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="taskDueDateInput" class="field-label req">Due Date</label>
+            <input type="date" id="taskDueDateInput" class="field-input" required>
+            <span class="field-err" id="dateError">Please pick a due date.</span>
+          </div>
+
+          <div class="field">
+            <label for="taskStatusInput" class="field-label">Status</label>
+            <select id="taskStatusInput" class="field-input">
+              <option value="pending" selected>⏳ Pending</option>
+              <option value="completed">✅ Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="taskDescriptionInput" class="field-label">Notes / Description</label>
+          <textarea id="taskDescriptionInput" class="field-input" rows="3" placeholder="Add guidelines, links, or a checklist…" maxlength="500"></textarea>
+          <div class="char-count"><span id="charCount">0</span>/500</div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
+          <button type="submit" class="btn-save" id="saveTaskBtn">
+            <i class="fa-solid fa-floppy-disk"></i> Save Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==============================
+       DELETE CONFIRM MODAL
+  ================================ -->
+  <div class="modal-backdrop hidden" id="deleteConfirmModal">
+    <div class="modal-box modal-sm" role="dialog" aria-modal="true">
+      <div class="confirm-wrap">
+        <div class="confirm-ico"><i class="fa-solid fa-trash-can"></i></div>
+        <h3>Delete Task?</h3>
+        <p id="deleteConfirmMessage">This action cannot be undone.</p>
+        <div class="confirm-btns">
+          <button class="btn-cancel" id="cancelDeleteBtn">Cancel</button>
+          <button class="btn-delete" id="confirmDeleteBtn"><i class="fa-solid fa-trash-can"></i> Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       TOAST CONTAINER
+  ================================ -->
+  <div class="toast-shelf" id="toastContainer"></div>
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
+</body>
+</html>
