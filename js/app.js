@@ -127,8 +127,16 @@
 
     // Filter bar
     ftabs:          $$('.ftab'),
-    priorityFilter: $('priorityFilter'),
-    sortSelect:     $('sortBySelect'),
+    // Priority custom dropdown
+    priorityDropdown: $('priorityDropdown'),
+    priorityTrigger:  $('priorityTrigger'),
+    priorityMenu:     $('priorityMenu'),
+    priorityLabel:    $('priorityLabel'),
+    // Sort custom dropdown
+    sortDropdown:   $('sortDropdown'),
+    sortTrigger:    $('sortTrigger'),
+    sortMenu:       $('sortMenu'),
+    sortLabel:      $('sortLabel'),
     countAll:       $('countAll'),
     countPending:   $('countPending'),
     countCompleted: $('countCompleted'),
@@ -262,7 +270,9 @@
         btn.classList.add('active');
         filter.status = btn.dataset.status;
         filter.priority = 'all';
-        dom.priorityFilter.value = 'all';
+        // Reset priority dropdown label and active state
+        dom.priorityLabel.textContent = 'All Priorities';
+        dom.priorityMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.toggle('active', i.dataset.value === 'all'));
         // Sync filter tabs
         dom.ftabs.forEach(t => {
           t.classList.toggle('active', t.dataset.status === btn.dataset.status);
@@ -276,7 +286,12 @@
     dom.priorityNavs.forEach(btn => {
       btn.addEventListener('click', () => {
         filter.priority = btn.dataset.priority;
-        dom.priorityFilter.value = filter.priority;
+        // Sync custom priority dropdown label + active item
+        const matchItem = dom.priorityMenu.querySelector(`[data-value="${btn.dataset.priority}"]`);
+        if (matchItem) {
+          dom.priorityLabel.textContent = matchItem.textContent.trim();
+          dom.priorityMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.toggle('active', i === matchItem));
+        }
         render();
         if (window.innerWidth <= 860) closeSidebar();
       });
@@ -294,9 +309,37 @@
       });
     });
 
-    // Priority + sort dropdowns
-    dom.priorityFilter.addEventListener('change', e => { filter.priority = e.target.value; render(); });
-    dom.sortSelect.addEventListener('change', e => { filter.sort = e.target.value; render(); });
+    // Priority custom dropdown
+    dom.priorityTrigger.addEventListener('click', e => { e.stopPropagation(); toggleDropdown(dom.priorityDropdown, dom.sortDropdown); });
+    dom.priorityMenu.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', () => {
+        filter.priority = item.dataset.value;
+        dom.priorityLabel.textContent = item.textContent.trim();
+        dom.priorityMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        closeDropdown(dom.priorityDropdown);
+        render();
+      });
+    });
+
+    // Sort custom dropdown
+    dom.sortTrigger.addEventListener('click', e => { e.stopPropagation(); toggleDropdown(dom.sortDropdown, dom.priorityDropdown); });
+    dom.sortMenu.querySelectorAll('.dropdown-item').forEach(item => {
+      item.addEventListener('click', () => {
+        filter.sort = item.dataset.value;
+        dom.sortLabel.textContent = item.textContent.trim();
+        dom.sortMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        closeDropdown(dom.sortDropdown);
+        render();
+      });
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+      closeDropdown(dom.priorityDropdown);
+      closeDropdown(dom.sortDropdown);
+    });
 
     // Modal close
     dom.closeModalBtn.addEventListener('click', closeModal);
@@ -331,6 +374,25 @@
   ──────────────────────────────────────────*/
   function toggleSidebar() {
     sidebarOpen ? closeSidebar() : openSidebar();
+  }
+
+  /* ─────────────────────────────────────────
+     CUSTOM DROPDOWN HELPERS
+  ──────────────────────────────────────────*/
+  function toggleDropdown(dropdown, ...others) {
+    const isOpen = dropdown.classList.contains('open');
+    others.forEach(d => closeDropdown(d));
+    if (isOpen) {
+      closeDropdown(dropdown);
+    } else {
+      dropdown.classList.add('open');
+      dropdown.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  function closeDropdown(dropdown) {
+    dropdown.classList.remove('open');
+    dropdown.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');
   }
 
   function openSidebar() {

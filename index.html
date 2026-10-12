@@ -175,24 +175,35 @@
         </div>
 
         <div class="filter-selects">
-          <div class="select-pill">
-            <i class="fa-solid fa-filter" style="font-size:0.75rem;"></i>
-            <select id="priorityFilter">
-              <option value="all">All Priorities</option>
-              <option value="high">🔴 High</option>
-              <option value="medium">🟡 Medium</option>
-              <option value="low">🟢 Low</option>
-            </select>
+          <!-- Priority custom dropdown -->
+          <div class="custom-dropdown" id="priorityDropdown">
+            <button class="dropdown-trigger" id="priorityTrigger" aria-haspopup="listbox" aria-expanded="false">
+              <i class="fa-solid fa-filter" style="font-size:0.75rem;"></i>
+              <span class="dropdown-label" id="priorityLabel">All Priorities</span>
+              <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <ul class="dropdown-menu" id="priorityMenu" role="listbox">
+              <li class="dropdown-item active" data-value="all" role="option">All Priorities</li>
+              <li class="dropdown-item" data-value="high" role="option"><span class="dot dot-high"></span>High</li>
+              <li class="dropdown-item" data-value="medium" role="option"><span class="dot dot-medium"></span>Medium</li>
+              <li class="dropdown-item" data-value="low" role="option"><span class="dot dot-low"></span>Low</li>
+            </ul>
           </div>
-          <div class="select-pill">
-            <i class="fa-solid fa-arrow-up-wide-short" style="font-size:0.75rem;"></i>
-            <select id="sortBySelect">
-              <option value="dueDateAsc">Due: Soonest</option>
-              <option value="dueDateDesc">Due: Furthest</option>
-              <option value="priority">Priority</option>
-              <option value="newest">Newest First</option>
-              <option value="alphabetical">A → Z</option>
-            </select>
+
+          <!-- Sort custom dropdown -->
+          <div class="custom-dropdown" id="sortDropdown">
+            <button class="dropdown-trigger" id="sortTrigger" aria-haspopup="listbox" aria-expanded="false">
+              <i class="fa-solid fa-arrow-up-wide-short" style="font-size:0.75rem;"></i>
+              <span class="dropdown-label" id="sortLabel">Due: Soonest</span>
+              <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <ul class="dropdown-menu" id="sortMenu" role="listbox">
+              <li class="dropdown-item active" data-value="dueDateAsc" role="option"><i class="fa-solid fa-calendar-day"></i>Due: Soonest</li>
+              <li class="dropdown-item" data-value="dueDateDesc" role="option"><i class="fa-solid fa-calendar"></i>Due: Furthest</li>
+              <li class="dropdown-item" data-value="priority" role="option"><i class="fa-solid fa-fire-flame-curved"></i>Priority</li>
+              <li class="dropdown-item" data-value="newest" role="option"><i class="fa-solid fa-star"></i>Newest First</li>
+              <li class="dropdown-item" data-value="alphabetical" role="option"><i class="fa-solid fa-arrow-down-a-z"></i>A → Z</li>
+            </ul>
           </div>
         </div>
       </section>
